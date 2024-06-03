@@ -62,12 +62,13 @@ class TaskServiceImplTest {
                 .status(COMPLETED)
                 .build();
 
-        when(sut.getTaskById(1)).thenReturn(task);
+        when(taskRepository.findTaskById(1)).thenReturn(task);
 
         Task foundTask = sut.getTaskById(1);
 
         assertNotNull(foundTask);
         assertEquals(task, foundTask);
+        verify(taskRepository, times(1)).findTaskById(1);
     }
 
     @Test
@@ -75,12 +76,13 @@ class TaskServiceImplTest {
         List<Task> taskList = new ArrayList<>();
         taskList.add(new Task(1, "Test Name 1", COMPLETED));
         taskList.add(new Task(2, "Test Name 2", NOT_COMPLETED));
-        when(sut.getAllTasks()).thenReturn(taskList);
+        when(taskRepository.findAll()).thenReturn(taskList);
 
         List<Task> fetchedTaskList = sut.getAllTasks();
 
         assertNotNull(fetchedTaskList);
         assertEquals(taskList, fetchedTaskList);
+        verify(taskRepository, times(1)).findAll();
     }
 
     @Test
