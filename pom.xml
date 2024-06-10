@@ -16,6 +16,7 @@
 	<properties>
 		<java.version>17</java.version>
 		<swagger.version>2.5.0</swagger.version>
+		<maven-checkstyle-plugin-version>3.2.1</maven-checkstyle-plugin-version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -52,38 +53,18 @@
 			<artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
 			<version>${swagger.version}</version>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>junit</groupId>-->
-<!--			<artifactId>junit</artifactId>-->
-<!--			<scope>test</scope>-->
-<!--		</dependency>-->
-<!--		&lt;!&ndash; JUnit 5 &ndash;&gt;-->
-<!--		<dependency>-->
-<!--			<groupId>org.junit.jupiter</groupId>-->
-<!--			<artifactId>junit-jupiter-engine</artifactId>-->
-<!--			<version>5.10.2</version>-->
-<!--			<scope>test</scope>-->
-<!--		</dependency>-->
-
-<!--		&lt;!&ndash; Mockito &ndash;&gt;-->
-<!--		<dependency>-->
-<!--			<groupId>org.mockito</groupId>-->
-<!--			<artifactId>mockito-core</artifactId>-->
-<!--			<version>5.11.0</version>-->
-<!--			<scope>test</scope>-->
-<!--		</dependency>-->
-
-<!--		&lt;!&ndash; Mockito JUnit Jupiter &ndash;&gt;-->
-<!--		<dependency>-->
-<!--			<groupId>org.mockito</groupId>-->
-<!--			<artifactId>mockito-junit-jupiter</artifactId>-->
-<!--			<version>5.11.0</version>-->
-<!--			<scope>test</scope>-->
-<!--		</dependency>-->
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- JUnit 5 -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>5.10.2</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -98,6 +79,7 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -114,6 +96,28 @@
 					</excludes>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>${maven-checkstyle-plugin-version}</version>
+				<executions>
+					<execution>
+					<phase>validate</phase>
+						<configuration>
+					<configLocation>src/main/resources/check-style/checkstyle_rules.xml</configLocation>             <suppressionsLocation>src/main/resources/check-style/checkstyle-suppressions.xml
+							</suppressionsLocation>
+							<failsOnError>true</failsOnError>
+							<consoleOutput>true</consoleOutput>
+							<includeTestSourceDirectory>true</includeTestSourceDirectory>
+						</configuration>
+						<goals>
+					<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 	</build>
 

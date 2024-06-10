@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    username: postgres
+    password: 731009
+    url: jdbc:postgresql://localhost:5432/to_do_list
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
