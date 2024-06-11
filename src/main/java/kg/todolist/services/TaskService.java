@@ -1,5 +1,6 @@
 package kg.todolist.services;
 
+import kg.todolist.commons.exceptions.BaseException;
 import kg.todolist.dto.TaskNameDto;
 import kg.todolist.commons.enums.StatusOfTask;
 import kg.todolist.dto.UpdateTaskInfoDto;
@@ -10,13 +11,13 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import static kg.todolist.commons.enums.ExceptionCode.TASK_ID_NOT_FOUND;
 
 @Service
 @AllArgsConstructor
 public class TaskService {
-
     private final TaskRepository taskRepository;
 
     public Task createNewTask(TaskNameDto taskNameDto) {
@@ -25,14 +26,13 @@ public class TaskService {
                 .status(StatusOfTask.NOT_COMPLETED)
                 .build();
         TaskValidator.catchTaskNameIsNull().apply(task);
-        task=taskRepository.save(task);
+        task = taskRepository.save(task);
         return task;
     }
 
     public Task getTaskById(Integer id) {
-        Task task = taskRepository.findTaskById(id);
-        TaskValidator.catchNullException(TASK_ID_NOT_FOUND).apply(task);
-        return task;
+        Optional<Task> optionalTask = Optional.ofNullable(taskRepository.findTaskById(id));
+        return optionalTask.orElseThrow(() -> new BaseException(TASK_ID_NOT_FOUND));
     }
 
     public List<Task> getAllTasks() {
@@ -42,16 +42,13 @@ public class TaskService {
     }
 
     public void updateTaskById(UpdateTaskInfoDto updateTaskInfoDto) {
-        Task task = taskRepository.findTaskById(updateTaskInfoDto.id());
-        TaskValidator.catchNullException(TASK_ID_NOT_FOUND).apply(task);
+        Optional<Task> optionalTask = Optional.ofNullable(taskRepository.findTaskById(updateTaskInfoDto.id()));
+        Task task = optionalTask.orElseThrow(() -> new BaseException(TASK_ID_NOT_FOUND));
 
         TaskValidator.catchTaskNameAndStatusNull(updateTaskInfoDto).apply(new Task());
-        if (updateTaskInfoDto.newTaskName() != null) {
-            task.setTaskName(updateTaskInfoDto.newTaskName());
-        }
-        if (updateTaskInfoDto.status() != null) {
-            task.setStatus( updateTaskInfoDto.status());
-        }
+
+        Optional.ofNullable(updateTaskInfoDto.newTaskName()).ifPresent(task::setTaskName);
+        Optional.ofNullable(updateTaskInfoDto.status()).ifPresent(task::setStatus);
         taskRepository.save(task);
     }
 

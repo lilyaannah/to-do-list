@@ -3,8 +3,6 @@ package kg.todolist.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kg.todolist.commons.enums.ExceptionCode;
-import kg.todolist.commons.exceptions.BaseException;
 import kg.todolist.dto.TaskNameDto;
 import kg.todolist.dto.UpdateTaskInfoDto;
 import kg.todolist.models.Task;

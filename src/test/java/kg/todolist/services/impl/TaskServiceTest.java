@@ -77,24 +77,24 @@ class TaskServiceTest {
         assertEquals(taskList, fetchedTaskList);
     }
 
-//    @Test
-//    void updateTaskById() {
-//        Task newTask = Task.builder()
-//                .id(1)
-//                .taskName("New Name")
-//                .status(StatusOfTask.NOT_COMPLETED)
-//                .build();
-//
-//        UpdateTaskInfoDto updateTaskInfoDto =
-//                new UpdateTaskInfoDto(1, "New Name", StatusOfTask.COMPLETED);
-//
-////        when(taskRepository.findTaskById(updateTaskInfoDto.id())).thenReturn();
-////        when(taskRepository.save(any())).thenReturn(savedTask);
-//        sut.updateTaskById(updateTaskInfoDto);
-//
-//        assertEquals(updateTaskInfoDto.newTaskName(), newTask.getTaskName());
-//        assertEquals(StatusOfTask.COMPLETED, newTask.getStatus());
-//    }
+    @Test
+    void updateTaskById() {
+        Task newTask = Task.builder()
+                .id(1)
+                .taskName("New Name")
+                .status(StatusOfTask.NOT_COMPLETED)
+                .build();
+
+        UpdateTaskInfoDto updateTaskInfoDto =
+                new UpdateTaskInfoDto(1, "New Name", StatusOfTask.COMPLETED);
+
+//        when(taskRepository.findTaskById(updateTaskInfoDto.id())).thenReturn();
+//        when(taskRepository.save(any())).thenReturn(savedTask);
+        sut.updateTaskById(updateTaskInfoDto);
+
+        assertEquals(updateTaskInfoDto.newTaskName(), newTask.getTaskName());
+        assertEquals(StatusOfTask.COMPLETED, newTask.getStatus());
+    }
 
     @Test
     void taskNameIsEmptyException() {

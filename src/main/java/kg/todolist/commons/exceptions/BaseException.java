@@ -1,7 +1,6 @@
 package kg.todolist.commons.exceptions;
 
 import kg.todolist.commons.enums.ExceptionCode;
-import lombok.AllArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
