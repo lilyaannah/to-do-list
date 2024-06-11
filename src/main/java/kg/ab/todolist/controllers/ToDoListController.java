@@ -1,12 +1,15 @@
-package kg.todolist.controllers;
+package kg.ab.todolist.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kg.todolist.dto.TaskNameDto;
-import kg.todolist.dto.UpdateTaskInfoDto;
-import kg.todolist.models.Task;
-import kg.todolist.services.TaskService;
+import kg.ab.todolist.dto.TaskNameDto;
+import kg.ab.todolist.dto.UpdateTaskInfoDto;
+import kg.ab.todolist.models.Task;
+import kg.ab.todolist.services.TaskService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,17 +19,24 @@ import java.util.List;
 
 @Tag(name = "To-Do-List Контроллер ", description = "Взаимодействие с сервисом")
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v2")
 @AllArgsConstructor
 public class ToDoListController {
     private final TaskService taskService;
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Успешный ответ"),
+            @ApiResponse(responseCode = "400", description = "Не корректный запрос"),
+            @ApiResponse(responseCode = "404", description = "Ресурс не найден")
+    })
 
     @Operation(
             summary = "Создание новой задачи",
             description = "Позволяет создавать новые задачи"
     )
     @PostMapping()
-    public ResponseEntity<String> createTask(@RequestBody TaskNameDto taskName) {
+    public ResponseEntity<String> createTask(@RequestBody @Schema(example = """
+            { taskName : Example Task,  status : COMPLETED/NOT_COMPLETED }""") TaskNameDto taskName) {
         taskService.createNewTask(taskName);
         return new ResponseEntity<>("Task create successfully", HttpStatus.OK);
     }
@@ -35,7 +45,7 @@ public class ToDoListController {
             summary = "Получение новой задачи по id",
             description = "Позволяет получить задачу по id"
     )
-    @GetMapping("/task-id")
+    @GetMapping("/getTaskById")
     public ResponseEntity<Task> getTaskById(@RequestParam
                                             @Parameter(description = "Идентификатор задачи") Integer id) {
         return ResponseEntity.ok(taskService.getTaskById(id));
@@ -45,7 +55,7 @@ public class ToDoListController {
             summary = "Получение всех задач",
             description = "Позволяет получить все задачи с бд"
     )
-    @GetMapping("/get-all-task")
+    @GetMapping("/getAllTasks")
     public ResponseEntity<List<Task>> getAllTasks() {
 
         return ResponseEntity.ok(taskService.getAllTasks());
@@ -67,7 +77,7 @@ public class ToDoListController {
             description = "Позволяет удалять задачи с бд"
     )
     @DeleteMapping()
-    public ResponseEntity<String> deleteTask(@RequestParam(value = "id") @Parameter(description = "Идентификатор задачи") Integer id) {
+    public ResponseEntity<String> deleteTask(@RequestParam @Parameter(description = "Идентификатор задачи") Integer id) {
         taskService.deleteById(id);
         return ResponseEntity.ok("Task deleted successfully");
     }

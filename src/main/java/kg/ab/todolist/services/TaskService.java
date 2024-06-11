@@ -1,19 +1,18 @@
-package kg.todolist.services;
+package kg.ab.todolist.services;
 
-import kg.todolist.commons.exceptions.BaseException;
-import kg.todolist.dto.TaskNameDto;
-import kg.todolist.commons.enums.StatusOfTask;
-import kg.todolist.dto.UpdateTaskInfoDto;
-import kg.todolist.models.Task;
-import kg.todolist.models.repositories.TaskRepository;
-import kg.todolist.services.validation.TaskValidator;
+import kg.ab.todolist.commons.enums.ExceptionCode;
+import kg.ab.todolist.commons.enums.StatusOfTask;
+import kg.ab.todolist.commons.exceptions.BaseException;
+import kg.ab.todolist.dto.TaskNameDto;
+import kg.ab.todolist.models.Task;
+import kg.ab.todolist.models.repositories.TaskRepository;
+import kg.ab.todolist.services.validation.TaskValidator;
+import kg.ab.todolist.dto.UpdateTaskInfoDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-
-import static kg.todolist.commons.enums.ExceptionCode.TASK_ID_NOT_FOUND;
 
 @Service
 @AllArgsConstructor
@@ -32,7 +31,7 @@ public class TaskService {
 
     public Task getTaskById(Integer id) {
         Optional<Task> optionalTask = Optional.ofNullable(taskRepository.findTaskById(id));
-        return optionalTask.orElseThrow(() -> new BaseException(TASK_ID_NOT_FOUND));
+        return optionalTask.orElseThrow(() -> new BaseException(ExceptionCode.TASK_ID_NOT_FOUND));
     }
 
     public List<Task> getAllTasks() {
@@ -41,20 +40,20 @@ public class TaskService {
         return taskList;
     }
 
-    public void updateTaskById(UpdateTaskInfoDto updateTaskInfoDto) {
+    public Task updateTaskById(UpdateTaskInfoDto updateTaskInfoDto) {
         Optional<Task> optionalTask = Optional.ofNullable(taskRepository.findTaskById(updateTaskInfoDto.id()));
-        Task task = optionalTask.orElseThrow(() -> new BaseException(TASK_ID_NOT_FOUND));
+        Task task = optionalTask.orElseThrow(() -> new BaseException(ExceptionCode.TASK_ID_NOT_FOUND));
 
         TaskValidator.catchTaskNameAndStatusNull(updateTaskInfoDto).apply(new Task());
 
         Optional.ofNullable(updateTaskInfoDto.newTaskName()).ifPresent(task::setTaskName);
         Optional.ofNullable(updateTaskInfoDto.status()).ifPresent(task::setStatus);
-        taskRepository.save(task);
+        return taskRepository.save(task);
     }
 
     public void deleteById(Integer id) {
         Task task = taskRepository.findTaskById(id);
-        TaskValidator.catchNullException(TASK_ID_NOT_FOUND).apply(task);
+        TaskValidator.catchNullException(ExceptionCode.TASK_ID_NOT_FOUND).apply(task);
         taskRepository.deleteById(task.getId());
     }
 }

@@ -1,6 +1,6 @@
-package kg.todolist.models.repositories;
+package kg.ab.todolist.models.repositories;
 
-import kg.todolist.models.Task;
+import kg.ab.todolist.models.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,7 +1,7 @@
-package kg.todolist.models;
+package kg.ab.todolist.models;
 
 import jakarta.persistence.*;
-import kg.todolist.commons.enums.StatusOfTask;
+import kg.ab.todolist.commons.enums.StatusOfTask;
 import lombok.*;
 
 @Entity
@@ -14,9 +14,12 @@ import lombok.*;
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer id;
-    String taskName;
+    private Integer id;
+
+    private String taskName;
 
     @Enumerated(EnumType.STRING)
-    StatusOfTask status;
+    private StatusOfTask status;
+
+
 }

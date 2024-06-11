@@ -1,4 +1,4 @@
-package kg.todolist.commons.enums;
+package kg.ab.todolist.commons.enums;
 
 import jakarta.persistence.JoinColumn;
 

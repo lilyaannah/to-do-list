@@ -1,14 +1,12 @@
-package kg.todolist.services.validation;
+package kg.ab.todolist.services.validation;
 
-import kg.todolist.commons.enums.ExceptionCode;
-import kg.todolist.commons.exceptions.BaseException;
-import kg.todolist.dto.UpdateTaskInfoDto;
-import kg.todolist.models.Task;
+import kg.ab.todolist.commons.enums.ExceptionCode;
+import kg.ab.todolist.commons.exceptions.BaseException;
+import kg.ab.todolist.dto.UpdateTaskInfoDto;
+import kg.ab.todolist.models.Task;
 
 import java.util.List;
 import java.util.function.Function;
-
-import static kg.todolist.commons.enums.ExceptionCode.*;
 
 public interface TaskValidator extends Function<Task, Boolean> {
     default TaskValidator and(TaskValidator other) {
@@ -32,7 +30,7 @@ public interface TaskValidator extends Function<Task, Boolean> {
     static TaskValidator catchListNullException(List taskList) {
         return task -> {
             if (taskList.isEmpty()) {
-                throw new BaseException(LIST_IS_NULL);
+                throw new BaseException(ExceptionCode.LIST_IS_NULL);
             }
             return true;
         };
@@ -41,7 +39,7 @@ public interface TaskValidator extends Function<Task, Boolean> {
     static TaskValidator catchTaskNameIsNull() {
         return task -> {
             if (task.getTaskName() == null || task.getTaskName().isEmpty()) {
-                throw new BaseException(TASK_NAME_IS_NULL);
+                throw new BaseException(ExceptionCode.TASK_NAME_IS_NULL);
             }
             return true;
         };
@@ -50,7 +48,7 @@ public interface TaskValidator extends Function<Task, Boolean> {
     static TaskValidator catchTaskNameAndStatusNull(UpdateTaskInfoDto updateTaskInfoDto) {
         return task -> {
             if (updateTaskInfoDto.newTaskName() == null && updateTaskInfoDto.status() == null) {
-                throw new BaseException(TASK_NAME_AND_STATUS_NULL);
+                throw new BaseException(ExceptionCode.TASK_NAME_AND_STATUS_NULL);
             }
             return true;
         };

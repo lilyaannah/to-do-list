@@ -1,34 +1,29 @@
-package kg.todolist.services.impl;
+package kg.ab.todolist.services.impl;
 
-import kg.todolist.commons.enums.ExceptionCode;
-import kg.todolist.commons.enums.StatusOfTask;
-import kg.todolist.commons.exceptions.BaseException;
-import kg.todolist.dto.TaskNameDto;
-import kg.todolist.dto.UpdateTaskInfoDto;
-import kg.todolist.models.Task;
-import kg.todolist.models.repositories.TaskRepository;
-import kg.todolist.services.TaskService;
-import org.junit.jupiter.api.BeforeEach;
+import kg.ab.todolist.commons.enums.StatusOfTask;
+import kg.ab.todolist.commons.exceptions.BaseException;
+import kg.ab.todolist.dto.TaskNameDto;
+import kg.ab.todolist.dto.UpdateTaskInfoDto;
+import kg.ab.todolist.models.Task;
+import kg.ab.todolist.models.repositories.TaskRepository;
+import kg.ab.todolist.services.TaskService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static kg.todolist.commons.enums.ExceptionCode.*;
-import static kg.todolist.commons.enums.StatusOfTask.COMPLETED;
-import static kg.todolist.commons.enums.StatusOfTask.NOT_COMPLETED;
+import static kg.ab.todolist.commons.enums.ExceptionCode.*;
+import static kg.ab.todolist.commons.enums.StatusOfTask.COMPLETED;
+import static kg.ab.todolist.commons.enums.StatusOfTask.NOT_COMPLETED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
 @ExtendWith(MockitoExtension.class)
 class TaskServiceTest {
     @Mock
@@ -71,29 +66,23 @@ class TaskServiceTest {
         taskList.add(new Task(2, "Test Name 2", NOT_COMPLETED));
         when(taskRepository.findAll()).thenReturn(taskList);
 
-        List<Task> fetchedTaskList = sut.getAllTasks();
-
-        assertNotNull(fetchedTaskList);
-        assertEquals(taskList, fetchedTaskList);
+        assertNotNull(sut.getAllTasks());
+        assertEquals(taskList, sut.getAllTasks());
     }
 
     @Test
     void updateTaskById() {
-        Task newTask = Task.builder()
+        Task updatedT = Task.builder()
                 .id(1)
                 .taskName("New Name")
-                .status(StatusOfTask.NOT_COMPLETED)
+                .status(COMPLETED)
                 .build();
+        when(taskRepository.findTaskById(1)).thenReturn(new Task());
+        when(taskRepository.save(any())).thenReturn(updatedT);
+        Task testSut= sut.updateTaskById(
+                new UpdateTaskInfoDto(1, "New Name", COMPLETED));
 
-        UpdateTaskInfoDto updateTaskInfoDto =
-                new UpdateTaskInfoDto(1, "New Name", StatusOfTask.COMPLETED);
-
-//        when(taskRepository.findTaskById(updateTaskInfoDto.id())).thenReturn();
-//        when(taskRepository.save(any())).thenReturn(savedTask);
-        sut.updateTaskById(updateTaskInfoDto);
-
-        assertEquals(updateTaskInfoDto.newTaskName(), newTask.getTaskName());
-        assertEquals(StatusOfTask.COMPLETED, newTask.getStatus());
+        assertEquals(updatedT,testSut);
     }
 
     @Test
