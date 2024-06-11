@@ -36,7 +36,7 @@ public class ToDoListController {
     )
     @PostMapping()
     public ResponseEntity<String> createTask(@RequestBody @Schema(example = """
-            { taskName : Example Task,  status : COMPLETED/NOT_COMPLETED }""") TaskNameDto taskName) {
+            { taskName : Example Task, status : COMPLETED/NOT_COMPLETED }""") TaskNameDto taskName) {
         taskService.createNewTask(taskName);
         return new ResponseEntity<>("Task create successfully", HttpStatus.OK);
     }
@@ -67,7 +67,9 @@ public class ToDoListController {
             description = "Позволяет обновлять определенные данные задачи"
     )
     @PutMapping()
-    public ResponseEntity<String> updateTask(@RequestBody UpdateTaskInfoDto updateTaskInfoDto) {
+    public ResponseEntity<String> updateTask(@RequestBody @Schema(example = """
+            {id : id,  taskName : Example Task, status : COMPLETED/NOT_COMPLETED }""")
+                                                 UpdateTaskInfoDto updateTaskInfoDto) {
         taskService.updateTaskById(updateTaskInfoDto);
         return ResponseEntity.ok("Task updated successfully");
     }
