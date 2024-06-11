@@ -43,8 +43,6 @@ public class TaskService {
     public Task updateTaskById(UpdateTaskInfoDto updateTaskInfoDto) {
         Task task = Optional.ofNullable(taskRepository.findTaskById(updateTaskInfoDto.id()))
                 .orElseThrow(() -> new BaseException(ExceptionCode.TASK_ID_NOT_FOUND));
-        //Task task = optionalTask.orElseThrow(() -> new BaseException(ExceptionCode.TASK_ID_NOT_FOUND));
-
         TaskValidator.catchTaskNameAndStatusNull(updateTaskInfoDto).apply(new Task());
 
         Optional.ofNullable(updateTaskInfoDto.newTaskName()).ifPresent(task::setTaskName);
