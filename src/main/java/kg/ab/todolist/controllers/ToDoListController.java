@@ -2,6 +2,8 @@ package kg.ab.todolist.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -23,12 +25,6 @@ import java.util.List;
 @AllArgsConstructor
 public class ToDoListController {
     private final TaskService taskService;
-
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Успешный ответ"),
-            @ApiResponse(responseCode = "400", description = "Не корректный запрос"),
-            @ApiResponse(responseCode = "404", description = "Ресурс не найден")
-    })
 
     @Operation(
             summary = "Создание новой задачи",
@@ -57,11 +53,11 @@ public class ToDoListController {
     )
     @GetMapping("/getAllTasks")
     public ResponseEntity<List<Task>> getAllTasks() {
-
         return ResponseEntity.ok(taskService.getAllTasks());
     }
 
-    //
+
+
     @Operation(
             summary = "Обновление данных задачи",
             description = "Позволяет обновлять определенные данные задачи"
@@ -69,7 +65,7 @@ public class ToDoListController {
     @PutMapping()
     public ResponseEntity<String> updateTask(@RequestBody @Schema(example = """
             {id : id,  taskName : Example Task, status : COMPLETED/NOT_COMPLETED }""")
-                                                 UpdateTaskInfoDto updateTaskInfoDto) {
+                                             UpdateTaskInfoDto updateTaskInfoDto) {
         taskService.updateTaskById(updateTaskInfoDto);
         return ResponseEntity.ok("Task updated successfully");
     }
