@@ -7,12 +7,10 @@ import kg.ab.todolist.dto.UpdateTaskInfoDto;
 import kg.ab.todolist.models.Task;
 import kg.ab.todolist.models.repositories.TaskRepository;
 import kg.ab.todolist.services.TaskService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
@@ -81,10 +79,10 @@ class TaskServiceTest {
                 .build();
         when(taskRepository.findTaskById(1)).thenReturn(new Task());
         when(taskRepository.save(any())).thenReturn(updatedT);
-        Task testSut= sut.updateTaskById(
+        Task testSut = sut.updateTaskById(
                 new UpdateTaskInfoDto(1, "New Name", COMPLETED));
 
-        assertEquals(updatedT,testSut);
+        assertEquals(updatedT, testSut);
     }
 
     @Test

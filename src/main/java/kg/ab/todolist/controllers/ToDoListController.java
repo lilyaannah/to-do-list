@@ -17,7 +17,7 @@ import java.util.List;
 
 @Tag(name = "To-Do-List Контроллер ", description = "Взаимодействие с сервисом")
 @RestController
-@RequestMapping("/api/v2")
+@RequestMapping("/api/v1")
 @AllArgsConstructor
 public class ToDoListController {
     private final TaskService taskService;
@@ -51,7 +51,6 @@ public class ToDoListController {
     public ResponseEntity<List<Task>> getAllTasks() {
         return ResponseEntity.ok(taskService.getAllTasks());
     }
-
 
 
     @Operation(
