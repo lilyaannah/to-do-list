@@ -39,7 +39,7 @@ public interface TaskValidator extends Function<Task, Boolean> {
     static TaskValidator catchTaskNameIsNull() {
         return task -> {
             if (task.getTaskName() == null || task.getTaskName().isEmpty()) {
-                throw new BaseException(ExceptionCode.TASK_NAME_IS_NULL);
+                throw new BaseException(ExceptionCode.TASK_NOT_FOUND);
             }
             return true;
         };
@@ -48,7 +48,7 @@ public interface TaskValidator extends Function<Task, Boolean> {
     static TaskValidator catchTaskNameAndStatusNull(UpdateTaskInfoDto updateTaskInfoDto) {
         return task -> {
             if (updateTaskInfoDto.newTaskName() == null && updateTaskInfoDto.status() == null) {
-                throw new BaseException(ExceptionCode.TASK_NAME_AND_STATUS_NULL);
+                throw new BaseException(ExceptionCode.TASK_NOT_FOUND);
             }
             return true;
         };

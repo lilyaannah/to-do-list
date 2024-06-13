@@ -31,7 +31,7 @@ public class TaskService {
 
     public Task getTaskById(Integer id) {
         Optional<Task> optionalTask = Optional.ofNullable(taskRepository.findTaskById(id));
-        return optionalTask.orElseThrow(() -> new BaseException(ExceptionCode.TASK_ID_NOT_FOUND));
+        return optionalTask.orElseThrow(() -> new BaseException(ExceptionCode.TASK_NOT_FOUND));
     }
 
     public List<Task> getAllTasks() {
@@ -42,7 +42,7 @@ public class TaskService {
 
     public Task updateTaskById(UpdateTaskInfoDto updateTaskInfoDto) {
         Task task = Optional.ofNullable(taskRepository.findTaskById(updateTaskInfoDto.id()))
-                .orElseThrow(() -> new BaseException(ExceptionCode.TASK_ID_NOT_FOUND));
+                .orElseThrow(() -> new BaseException(ExceptionCode.TASK_NOT_FOUND));
         TaskValidator.catchTaskNameAndStatusNull(updateTaskInfoDto).apply(new Task());
 
         Optional.ofNullable(updateTaskInfoDto.newTaskName()).ifPresent(task::setTaskName);
@@ -52,7 +52,7 @@ public class TaskService {
 
     public void deleteById(Integer id) {
         Task task = taskRepository.findTaskById(id);
-        TaskValidator.catchNullException(ExceptionCode.TASK_ID_NOT_FOUND).apply(task);
+        TaskValidator.catchNullException(ExceptionCode.TASK_NOT_FOUND).apply(task);
         taskRepository.deleteById(task.getId());
     }
 }

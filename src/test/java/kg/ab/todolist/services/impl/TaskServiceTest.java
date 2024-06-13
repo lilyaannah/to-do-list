@@ -7,15 +7,16 @@ import kg.ab.todolist.dto.UpdateTaskInfoDto;
 import kg.ab.todolist.models.Task;
 import kg.ab.todolist.models.repositories.TaskRepository;
 import kg.ab.todolist.services.TaskService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static kg.ab.todolist.commons.enums.ExceptionCode.*;
 import static kg.ab.todolist.commons.enums.StatusOfTask.COMPLETED;
@@ -31,6 +32,7 @@ class TaskServiceTest {
 
     @InjectMocks
     private TaskService sut;
+
     @Test
     void createTask() {
         TaskNameDto taskNameDto = new TaskNameDto("Test task", COMPLETED);
@@ -97,7 +99,7 @@ class TaskServiceTest {
                 () -> sut.createNewTask(taskNameDto)
         );
 
-        assertEquals(TASK_NAME_IS_NULL.getMessage(), exception.getMessage());
+        assertEquals(TASK_NOT_FOUND.getMessage(), exception.getMessage());
     }
 
     @Test
@@ -106,7 +108,7 @@ class TaskServiceTest {
                 BaseException.class,
                 () -> sut.getTaskById(any())
         );
-        assertEquals(TASK_ID_NOT_FOUND.getMessage(), exception.getMessage());
+        assertEquals(TASK_NOT_FOUND.getMessage(), exception.getMessage());
     }
 
     @Test
@@ -127,7 +129,7 @@ class TaskServiceTest {
                 BaseException.class,
                 () -> sut.updateTaskById(updateTaskInfoDto)
         );
-        assertEquals(TASK_ID_NOT_FOUND.getMessage(), exception.getMessage());
+        assertEquals(TASK_NOT_FOUND.getMessage(), exception.getMessage());
     }
 
     @Test
@@ -136,6 +138,6 @@ class TaskServiceTest {
                 BaseException.class,
                 () -> sut.deleteById(1)
         );
-        assertEquals(TASK_ID_NOT_FOUND.getMessage(), exception.getMessage());
+        assertEquals(TASK_NOT_FOUND.getMessage(), exception.getMessage());
     }
 }
