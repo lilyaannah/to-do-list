@@ -1,23 +1,18 @@
 package kg.ab.todolist.api;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import kg.ab.todolist.commons.enums.ExceptionCode;
 import kg.ab.todolist.dto.TaskNameDto;
 import kg.ab.todolist.dto.UpdateTaskInfoDto;
 import kg.ab.todolist.models.Task;
 import kg.ab.todolist.services.TaskService;
 import lombok.AllArgsConstructor;
-import lombok.NonNull;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,7 +30,8 @@ public class ToDoListController {
     )
     @PostMapping()
     public ResponseEntity<String> createTask(
-            @RequestBody @Valid
+            @Valid
+            @RequestBody
             @Schema(description = "Название задачи") TaskNameDto taskNameDto) {
 
         taskService.createNewTask(taskNameDto);
@@ -47,7 +43,9 @@ public class ToDoListController {
             description = "Позволяет получить задачу по id"
     )
     @GetMapping("/getTaskById")
-    public ResponseEntity<Task> getTaskById(@RequestParam
+    public ResponseEntity<Task> getTaskById(@NotNull
+                                            @Valid
+                                            @RequestParam
                                             @Parameter(description = "Идентификатор задачи") Integer id) {
         return new ResponseEntity<>(taskService.getTaskById(id), ExceptionCode.SUCCESS.getStatus());
     }
@@ -66,8 +64,9 @@ public class ToDoListController {
             summary = "Обновление данных задачи",
             description = "Позволяет обновлять определенные данные задачи"
     )
-    @PutMapping()
-    public ResponseEntity<String> updateTask(@RequestBody @Schema(example = """
+    @PatchMapping()
+    public ResponseEntity<String> updateTask(@Valid
+                                             @RequestBody @Schema(example = """
             {"id" : "id",  "taskName" : "Example Task", "status" : "COMPLETED"}""")
                                              UpdateTaskInfoDto updateTaskInfoDto) {
         taskService.updateTaskById(updateTaskInfoDto);

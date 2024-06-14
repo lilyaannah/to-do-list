@@ -24,35 +24,38 @@ public class TaskService {
                 .taskName(taskNameDto.taskName())
                 .status(StatusOfTask.NOT_COMPLETED)
                 .build();
-        //TaskValidator.catchTaskNameIsNull().apply(task);
         task = taskRepository.save(task);
         return task;
     }
 
     public Task getTaskById(Integer id) {
         Optional<Task> optionalTask = Optional.ofNullable(taskRepository.findTaskById(id));
-        return optionalTask.orElseThrow(() -> new BaseException(ExceptionCode.TASK_NOT_FOUND));
+        return optionalTask.orElseThrow(() -> new BaseException(ExceptionCode.NOT_FOUND));
     }
 
     public List<Task> getAllTasks() {
         List<Task> taskList = taskRepository.findAll();
-        TaskValidator.catchListNullException(taskList).apply(new Task());
+        if (taskList.isEmpty()) {
+            throw new BaseException(ExceptionCode.LIST_IS_NULL);
+        }
         return taskList;
     }
 
     public Task updateTaskById(UpdateTaskInfoDto updateTaskInfoDto) {
-        Task task = Optional.ofNullable(taskRepository.findTaskById(updateTaskInfoDto.id()))
-                .orElseThrow(() -> new BaseException(ExceptionCode.TASK_NOT_FOUND));
-        TaskValidator.catchTaskNameAndStatusNull(updateTaskInfoDto).apply(new Task());
+        Task task = getTaskById(updateTaskInfoDto.id());
+        TaskValidator.catchTaskNameAndStatusNull(updateTaskInfoDto).apply(task);
 
-        Optional.ofNullable(updateTaskInfoDto.newTaskName()).ifPresent(task::setTaskName);
-        Optional.ofNullable(updateTaskInfoDto.status()).ifPresent(task::setStatus);
+        task.setTaskName(updateTaskInfoDto.newTaskName() != null ?
+                updateTaskInfoDto.newTaskName() : task.getTaskName());
+
+        task.setStatus(updateTaskInfoDto.status() != null ?
+                updateTaskInfoDto.status() : task.getStatus());
+
         return taskRepository.save(task);
     }
 
     public void deleteById(Integer id) {
-        Task task = taskRepository.findTaskById(id);
-        TaskValidator.catchNullException(ExceptionCode.TASK_NOT_FOUND).apply(task);
+        Task task = getTaskById(id);
         taskRepository.deleteById(task.getId());
     }
 }

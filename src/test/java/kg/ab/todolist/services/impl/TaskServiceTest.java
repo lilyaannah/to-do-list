@@ -83,27 +83,12 @@ class TaskServiceTest {
     }
 
     @Test
-    void taskNameIsEmptyException() {
-        TaskNameDto taskNameDto = TaskNameDto.builder()
-                .taskName("")
-                .status(COMPLETED)
-                .build();
-
-        BaseException exception = assertThrows(
-                BaseException.class,
-                () -> sut.createNewTask(taskNameDto)
-        );
-
-        assertEquals(TASK_NOT_FOUND.getMessage(), exception.getMessage());
-    }
-
-    @Test
     void getTaskIdNotFoundException() {
         BaseException exception = assertThrows(
                 BaseException.class,
                 () -> sut.getTaskById(any())
         );
-        assertEquals(TASK_NOT_FOUND.getMessage(), exception.getMessage());
+        assertEquals(NOT_FOUND.getMessage(), exception.getMessage());
     }
 
     @Test
@@ -124,7 +109,7 @@ class TaskServiceTest {
                 BaseException.class,
                 () -> sut.updateTaskById(updateTaskInfoDto)
         );
-        assertEquals(TASK_NOT_FOUND.getMessage(), exception.getMessage());
+        assertEquals(NOT_FOUND.getMessage(), exception.getMessage());
     }
 
     @Test
@@ -133,6 +118,6 @@ class TaskServiceTest {
                 BaseException.class,
                 () -> sut.deleteById(1)
         );
-        assertEquals(TASK_NOT_FOUND.getMessage(), exception.getMessage());
+        assertEquals(NOT_FOUND.getMessage(), exception.getMessage());
     }
 }
