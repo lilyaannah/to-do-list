@@ -1,6 +1,7 @@
 package kg.ab.todolist.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import kg.ab.todolist.commons.enums.StatusOfTask;
 import lombok.*;
 
@@ -16,6 +17,8 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "task_name", nullable = false)
+    @NotBlank(message = "Task name cannot be blank")
     private String taskName;
 
     @Enumerated(EnumType.STRING)

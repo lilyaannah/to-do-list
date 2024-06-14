@@ -1,11 +1,13 @@
-package kg.ab.todolist.commons.exceptions.response;
+package kg.ab.todolist.commons.exceptions;
 
 import kg.ab.todolist.commons.enums.ExceptionCode;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Builder
 public class ErrorResponse {
     private ExceptionCode code;
     private String message;

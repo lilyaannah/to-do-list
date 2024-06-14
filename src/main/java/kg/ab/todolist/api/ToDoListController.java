@@ -1,17 +1,23 @@
-package kg.ab.todolist.controllers;
+package kg.ab.todolist.api;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import kg.ab.todolist.commons.enums.ExceptionCode;
 import kg.ab.todolist.dto.TaskNameDto;
 import kg.ab.todolist.dto.UpdateTaskInfoDto;
 import kg.ab.todolist.models.Task;
 import kg.ab.todolist.services.TaskService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.NonNull;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,9 +34,11 @@ public class ToDoListController {
             description = "Позволяет создавать новые задачи"
     )
     @PostMapping()
-    public ResponseEntity<String> createTask(@RequestBody @Schema(example = """
-            { "taskName" : "Example Task" }""") TaskNameDto taskName) {
-        taskService.createNewTask(taskName);
+    public ResponseEntity<String> createTask(
+            @RequestBody @Valid
+            @Schema(description = "Название задачи") TaskNameDto taskNameDto) {
+
+        taskService.createNewTask(taskNameDto);
         return new ResponseEntity<>("Task create successfully", ExceptionCode.SUCCESS.getStatus());
     }
 
@@ -63,7 +71,7 @@ public class ToDoListController {
             {"id" : "id",  "taskName" : "Example Task", "status" : "COMPLETED"}""")
                                              UpdateTaskInfoDto updateTaskInfoDto) {
         taskService.updateTaskById(updateTaskInfoDto);
-        return new  ResponseEntity<>("Task updated successfully", ExceptionCode.SUCCESS.getStatus());
+        return new ResponseEntity<>("Task updated successfully", ExceptionCode.SUCCESS.getStatus());
     }
 
     @Operation(
@@ -74,6 +82,6 @@ public class ToDoListController {
     public ResponseEntity<String> deleteTask(@RequestParam @Schema(example = """
             {"id" : "id" }""") @Parameter(description = "Идентификатор задачи") Integer id) {
         taskService.deleteById(id);
-        return  new ResponseEntity<>("Task deleted successfully", ExceptionCode.SUCCESS.getStatus());
+        return new ResponseEntity<>("Task deleted successfully", ExceptionCode.SUCCESS.getStatus());
     }
 }

@@ -1,23 +1,26 @@
-package kg.ab.todolist.commons.exceptions;
+package kg.ab.todolist.api.advice;
 
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import ch.qos.logback.core.spi.ErrorCodes;
 import kg.ab.todolist.commons.enums.ExceptionCode;
-import kg.ab.todolist.commons.exceptions.response.ErrorResponse;
-import kg.ab.todolist.commons.exceptions.response.ListNullExp;
-import kg.ab.todolist.commons.exceptions.response.WrongRequestException;
+import kg.ab.todolist.commons.exceptions.BaseException;
+import kg.ab.todolist.commons.exceptions.ErrorResponse;
+import kg.ab.todolist.commons.exceptions.ListNullExp;
+import kg.ab.todolist.commons.exceptions.WrongRequestException;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice
-public class ExceptionController {
+import java.util.Objects;
 
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", message = "Successfully handled base exception"),
-//            @ApiResponse(code = 404, message = "Resource not found"),
-//            @ApiResponse(code = 500, message = "Internal server error")
-//    })
+@Order(Ordered.HIGHEST_PRECEDENCE)
+@RestControllerAdvice
+public class ControllerAdvice {
 
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<ErrorResponse> handleBaseException(BaseException exception) {
@@ -39,4 +42,15 @@ public class ExceptionController {
                 .status(ExceptionCode.LIST_IS_NULL.getStatus())
                 .body(new ErrorResponse(exception.getExceptionCode(), exception.getMessage()));
     }
+
+    @ExceptionHandler({MethodArgumentNotValidException.class})
+    public ResponseEntity<String> handleMethodNotValidException(MethodArgumentNotValidException ex) {
+        String message = ex.getBindingResult().getFieldErrors().stream()
+                .map(FieldError::getDefaultMessage)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse("Not valid input!");
+        return ResponseEntity.badRequest().body(message);
+    }
+
 }

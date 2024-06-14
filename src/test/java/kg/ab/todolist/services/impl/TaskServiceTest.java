@@ -12,7 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,13 +26,11 @@ import static org.mockito.Mockito.*;
 class TaskServiceTest {
     @Mock
     private TaskRepository taskRepository;
-
     @InjectMocks
     private TaskService sut;
-
     @Test
     void createTask() {
-        TaskNameDto taskNameDto = new TaskNameDto("Test task", COMPLETED);
+        TaskNameDto taskNameDto = new TaskNameDto("Test task");
         Task savedTask = Task.builder()
                 .taskName("Test task")
                 .status(COMPLETED)

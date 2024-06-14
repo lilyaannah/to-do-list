@@ -24,7 +24,7 @@ public class TaskService {
                 .taskName(taskNameDto.taskName())
                 .status(StatusOfTask.NOT_COMPLETED)
                 .build();
-        TaskValidator.catchTaskNameIsNull().apply(task);
+        //TaskValidator.catchTaskNameIsNull().apply(task);
         task = taskRepository.save(task);
         return task;
     }
