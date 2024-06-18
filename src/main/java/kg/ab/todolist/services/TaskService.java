@@ -35,7 +35,9 @@ public class TaskService {
     }
 
     public TaskResponse getTaskById(Integer id) {
-        Task task = taskRepository.findTaskById(id).orElseThrow(() -> new BaseException(ExceptionCode.NOT_FOUND));
+        Task task = taskRepository.findTaskById(id)
+                .filter(sm -> sm.getStatus() != Status.DELETED)
+                .orElseThrow(() -> new BaseException(ExceptionCode.NOT_FOUND));
         return TaskResponse.builder()
                 .id(task.getId())
                 .taskName(task.getTaskName())

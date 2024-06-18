@@ -60,7 +60,6 @@ public class ToDoListController {
         return new ResponseEntity<>(taskService.getAllTasks(), ExceptionCode.SUCCESS.getStatus());
     }
 
-
     @Operation(
             summary = "Обновление данных задачи",
             description = "Позволяет обновлять определенные данные задачи"
