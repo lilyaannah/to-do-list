@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Objects;
 
-@Order(Ordered.HIGHEST_PRECEDENCE)
 @RestControllerAdvice
 public class ControllerAdvice {
 
