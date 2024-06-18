@@ -29,7 +29,7 @@ public class ToDoListController {
             summary = "Создание новой задачи",
             description = "Позволяет создавать новые задачи"
     )
-    @PostMapping()
+    @PostMapping("/tasks")
     public ResponseEntity<TaskResponse> createTask(
             @Valid
             @RequestBody
@@ -42,10 +42,10 @@ public class ToDoListController {
             summary = "Получение новой задачи по id",
             description = "Позволяет получить задачу по id"
     )
-    @GetMapping("/getTaskById")
+    @GetMapping("/tasks/{id}")
     public ResponseEntity<TaskResponse> getTaskById(@NotNull
                                                     @Valid
-                                                    @RequestParam
+                                                    @PathVariable
                                                     @Parameter(description = "Идентификатор задачи") Integer id) {
         return new ResponseEntity<>(taskService.getTaskById(id), ExceptionCode.SUCCESS.getStatus());
     }
@@ -54,7 +54,7 @@ public class ToDoListController {
             summary = "Получение всех задач",
             description = "Позволяет получить все задачи с бд"
     )
-    @GetMapping("/getAllTasks")
+    @GetMapping("/tasks")
     public ResponseEntity<List<TaskResponse>> getAllTasks() {
         return new ResponseEntity<>(taskService.getAllTasks(), ExceptionCode.SUCCESS.getStatus());
     }
@@ -63,14 +63,16 @@ public class ToDoListController {
             summary = "Обновление данных задачи",
             description = "Позволяет обновлять определенные данные задачи"
     )
-    @PatchMapping()
+    @PatchMapping("/tasks")
     public ResponseEntity<TaskResponse> updateTask(@Valid
                                                    @RequestBody
                                                    @Schema(example = """
-                                                           {"id" : "id",
+                                                           {
+                                                           "id" : "id",
                                                            "taskName" : "Example Task",
-                                                           "status" : "COMPLETED"}""")
-                                                   UpdateTaskInfoDto updateTaskInfoDto) {
+                                                           "status" : "COMPLETED"
+                                                           }
+                                                           """) UpdateTaskInfoDto updateTaskInfoDto) {
         return ResponseEntity.status(ExceptionCode.SUCCESS.getStatus())
                 .body(taskService.updateTaskById(updateTaskInfoDto));
     }
@@ -79,10 +81,13 @@ public class ToDoListController {
             summary = "Удаление задачи",
             description = "Позволяет удалять задачи с бд"
     )
-    @DeleteMapping()
-    public ResponseEntity<TaskResponse> deleteTask(@RequestParam
+    @DeleteMapping("/tasks/{id}")
+    public ResponseEntity<TaskResponse> deleteTask(@PathVariable
                                                    @Schema(example = """
-                                                           { "id" : "id" }""")
+                                                           {
+                                                           "id" : "id"
+                                                           }
+                                                           """)
                                                    @Parameter(description = "Идентификатор задачи") Integer id) {
         return ResponseEntity.status(ExceptionCode.SUCCESS.getStatus())
                 .body(taskService.deleteById(id));
