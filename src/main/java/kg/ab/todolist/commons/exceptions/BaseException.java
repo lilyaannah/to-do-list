@@ -4,8 +4,8 @@ import kg.ab.todolist.commons.enums.ExceptionCode;
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter
 @Getter
+@Setter
 public class BaseException extends RuntimeException {
     private final ExceptionCode exceptionCode;
 

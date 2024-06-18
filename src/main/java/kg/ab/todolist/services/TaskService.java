@@ -1,36 +1,46 @@
 package kg.ab.todolist.services;
 
 import kg.ab.todolist.commons.enums.ExceptionCode;
+import kg.ab.todolist.commons.enums.Status;
 import kg.ab.todolist.commons.enums.StatusOfTask;
 import kg.ab.todolist.commons.exceptions.BaseException;
-import kg.ab.todolist.dto.TaskNameDto;
+import kg.ab.todolist.dto.request.TaskNameDto;
+import kg.ab.todolist.dto.TaskResponse;
 import kg.ab.todolist.models.Task;
 import kg.ab.todolist.models.repositories.TaskRepository;
 import kg.ab.todolist.services.validation.TaskValidator;
-import kg.ab.todolist.dto.UpdateTaskInfoDto;
+import kg.ab.todolist.dto.request.UpdateTaskInfoDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class TaskService {
     private final TaskRepository taskRepository;
 
-    public Task createNewTask(TaskNameDto taskNameDto) {
-        Task task = Task.builder()
+    public TaskResponse createNewTask(TaskNameDto taskNameDto) {
+        Task task = taskRepository.save(Task.builder()
                 .taskName(taskNameDto.taskName())
-                .status(StatusOfTask.NOT_COMPLETED)
+                .taskStatus(StatusOfTask.NOT_COMPLETED)
+                .status(Status.CREATED)
+                .build());
+
+        return TaskResponse.builder()
+                .id(task.getId())
+                .taskName(task.getTaskName())
+                .taskStatus(StatusOfTask.NOT_COMPLETED)
                 .build();
-        task = taskRepository.save(task);
-        return task;
     }
 
-    public Task getTaskById(Integer id) {
-        Optional<Task> optionalTask = Optional.ofNullable(taskRepository.findTaskById(id));
-        return optionalTask.orElseThrow(() -> new BaseException(ExceptionCode.NOT_FOUND));
+    public TaskResponse getTaskById(Integer id) {
+        Task task = taskRepository.findTaskById(id).orElseThrow(() -> new BaseException(ExceptionCode.NOT_FOUND));
+        return TaskResponse.builder()
+                .id(task.getId())
+                .taskName(task.getTaskName())
+                .taskStatus(task.getTaskStatus())
+                .build();
     }
 
     public List<Task> getAllTasks() {
@@ -41,22 +51,35 @@ public class TaskService {
         return taskList;
     }
 
-    public Task updateTaskById(UpdateTaskInfoDto updateTaskInfoDto) {
-        Task task = getTaskById(updateTaskInfoDto.id());
+    public TaskResponse updateTaskById(UpdateTaskInfoDto updateTaskInfoDto) {
+        Task task = taskRepository.findTaskById(updateTaskInfoDto.id())
+                .orElseThrow(() -> new BaseException(ExceptionCode.NOT_FOUND));
+
         TaskValidator.catchTaskNameAndStatusNull(updateTaskInfoDto).apply(task);
 
         task.setTaskName(updateTaskInfoDto.newTaskName() != null ?
                 updateTaskInfoDto.newTaskName() : task.getTaskName());
 
-        task.setStatus(updateTaskInfoDto.status() != null ?
-                updateTaskInfoDto.status() : task.getStatus());
+        task.setTaskStatus(updateTaskInfoDto.status() != null ?
+                updateTaskInfoDto.status() : task.getTaskStatus());
+        task.setStatus(Status.UPDATED);
 
-        return taskRepository.save(task);
+        return TaskResponse.builder()
+                .id(taskRepository.save(task).getId())
+                .taskName(taskRepository.save(task).getTaskName())
+                .taskStatus(taskRepository.save(task).getTaskStatus())
+                .build();
     }
 
-    public void deleteById(Integer id) {
-        Task task = getTaskById(id);
-        taskRepository.deleteById(task.getId());
+    public TaskResponse deleteById(Integer id) {
+        Task task = taskRepository.findTaskById(id)
+                .orElseThrow(() -> new BaseException(ExceptionCode.NOT_FOUND));
+        task.setStatus(Status.DELETED);
+        return TaskResponse.builder()
+                .id(taskRepository.save(task).getId())
+                .taskName(taskRepository.save(task).getTaskName())
+                .taskStatus(taskRepository.save(task).getTaskStatus())
+                .build();
     }
 }
 

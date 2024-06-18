@@ -1,6 +1,7 @@
 package kg.ab.todolist.models;
 
 import jakarta.persistence.*;
+import kg.ab.todolist.commons.enums.Status;
 import kg.ab.todolist.commons.enums.StatusOfTask;
 import lombok.*;
 
@@ -20,9 +21,9 @@ public class Task {
     @Column(name = "task_name", nullable = false)
     private String taskName;
 
-    @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private StatusOfTask status;
+    private StatusOfTask taskStatus;
 
-
+    @Enumerated(EnumType.STRING)
+    private Status status;
 }

@@ -1,4 +1,4 @@
-package kg.ab.todolist.dto;
+package kg.ab.todolist.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
