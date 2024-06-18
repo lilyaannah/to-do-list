@@ -80,8 +80,13 @@ class TaskServiceTest {
         taskList.add(new Task(2, "Test Name 2", NOT_COMPLETED, Status.UPDATED));
         when(taskRepository.findAll()).thenReturn(taskList);
 
-        assertNotNull(sut.getAllTasks());
-        assertEquals(taskList, sut.getAllTasks());
+        List<TaskResponse> responseTaskList = new ArrayList<>();
+        responseTaskList.add(new TaskResponse(1, "Test Name 1", COMPLETED));
+        responseTaskList.add(new TaskResponse(2, "Test Name 2", NOT_COMPLETED));
+
+        List<TaskResponse> actual = sut.getAllTasks();
+        assertNotNull(actual);
+        assertEquals(actual, responseTaskList);
     }
 
     @Test
@@ -92,7 +97,7 @@ class TaskServiceTest {
                 .taskStatus(COMPLETED)
                 .build();
 
-        Task task =  Task.builder()
+        Task task = Task.builder()
                 .id(1)
                 .taskName("New name")
                 .taskStatus(COMPLETED)

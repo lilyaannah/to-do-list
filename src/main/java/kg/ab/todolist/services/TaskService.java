@@ -20,6 +20,14 @@ import java.util.List;
 public class TaskService {
     private final TaskRepository taskRepository;
 
+    /**
+     * Добавление новой задачи
+     *
+     * @RequestBody TaskNameDto - taskName - описание задачи
+     * автоматически статус задачи NOT_COMPLETED
+     * статус действия CREATED
+     * return TaskResponse
+     */
     public TaskResponse createNewTask(TaskNameDto taskNameDto) {
         Task task = taskRepository.save(Task.builder()
                 .taskName(taskNameDto.taskName())
@@ -34,6 +42,13 @@ public class TaskService {
                 .build();
     }
 
+    /**
+     * Получение задачи по id
+     *
+     * @RequestParam - id - идентификатор задачи
+     * если статус состояния задачи DELETED выводится не найдено
+     * return TaskResponse
+     */
     public TaskResponse getTaskById(Integer id) {
         Task task = taskRepository.findTaskById(id)
                 .filter(sm -> sm.getStatus() != Status.DELETED)
@@ -45,14 +60,27 @@ public class TaskService {
                 .build();
     }
 
-    public List<Task> getAllTasks() {
+    /**
+     * Получение списка всех задач
+     * кроме тех задач у которых статус состояния DELETED
+     * return TaskResponse
+     */
+    public List<TaskResponse> getAllTasks() {
         List<Task> taskList = taskRepository.findAll();
         if (taskList.isEmpty()) {
             throw new BaseException(ExceptionCode.LIST_IS_NULL);
         }
-        return taskList;
+        return taskList.stream()
+                .filter(task -> task.getStatus() != Status.DELETED)
+                .map(task -> new TaskResponse(task.getId(), task.getTaskName(), task.getTaskStatus())).toList();
     }
 
+    /**
+     * @RequestBody UpdateTaskInfoDto - taskStatus - статус задачи (COMPLETED-выполнено, NOT_COMPLETED -не выполнено);
+     * taskName - описание
+     * status - меняется на UPDATED
+     * return TaskResponse
+     */
     public TaskResponse updateTaskById(UpdateTaskInfoDto updateTaskInfoDto) {
         Task task = taskRepository.findTaskById(updateTaskInfoDto.id())
                 .orElseThrow(() -> new BaseException(ExceptionCode.NOT_FOUND));
@@ -73,6 +101,14 @@ public class TaskService {
                 .build();
     }
 
+
+    /**
+     * Удаление задачи по id
+     *
+     * @RequestParam - id - идентификатор задачи
+     * статус задачи меняется на DELETED
+     * return TaskResponse
+     */
     public TaskResponse deleteById(Integer id) {
         Task task = taskRepository.findTaskById(id)
                 .orElseThrow(() -> new BaseException(ExceptionCode.NOT_FOUND));

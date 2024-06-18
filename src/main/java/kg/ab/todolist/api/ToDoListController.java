@@ -10,7 +10,6 @@ import kg.ab.todolist.commons.enums.ExceptionCode;
 import kg.ab.todolist.dto.request.TaskNameDto;
 import kg.ab.todolist.dto.TaskResponse;
 import kg.ab.todolist.dto.request.UpdateTaskInfoDto;
-import kg.ab.todolist.models.Task;
 import kg.ab.todolist.services.TaskService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -56,7 +55,7 @@ public class ToDoListController {
             description = "Позволяет получить все задачи с бд"
     )
     @GetMapping("/getAllTasks")
-    public ResponseEntity<List<Task>> getAllTasks() {
+    public ResponseEntity<List<TaskResponse>> getAllTasks() {
         return new ResponseEntity<>(taskService.getAllTasks(), ExceptionCode.SUCCESS.getStatus());
     }
 
