@@ -13,6 +13,7 @@ import kg.ab.todolist.dto.request.UpdateTaskInfoDto;
 import kg.ab.todolist.models.Task;
 import kg.ab.todolist.services.TaskService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +35,7 @@ public class ToDoListController {
             @Valid
             @RequestBody
             @Schema(description = "Название задачи") TaskNameDto taskNameDto) {
-        return ResponseEntity.status(ExceptionCode.SUCCESS.getStatus())
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(taskService.createNewTask(taskNameDto));
     }
 
