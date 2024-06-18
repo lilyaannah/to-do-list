@@ -2,7 +2,7 @@ package kg.ab.todolist.services.validation;
 
 import kg.ab.todolist.commons.enums.ExceptionCode;
 import kg.ab.todolist.commons.exceptions.BaseException;
-import kg.ab.todolist.dto.UpdateTaskInfoDto;
+import kg.ab.todolist.dto.request.UpdateTaskInfoDto;
 import kg.ab.todolist.models.Task;
 import java.util.function.Function;
 

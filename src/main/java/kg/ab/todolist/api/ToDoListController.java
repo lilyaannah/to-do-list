@@ -7,8 +7,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import kg.ab.todolist.commons.enums.ExceptionCode;
-import kg.ab.todolist.dto.TaskNameDto;
-import kg.ab.todolist.dto.UpdateTaskInfoDto;
+import kg.ab.todolist.dto.request.TaskNameDto;
+import kg.ab.todolist.dto.TaskResponse;
+import kg.ab.todolist.dto.request.UpdateTaskInfoDto;
 import kg.ab.todolist.models.Task;
 import kg.ab.todolist.services.TaskService;
 import lombok.AllArgsConstructor;
@@ -29,13 +30,12 @@ public class ToDoListController {
             description = "Позволяет создавать новые задачи"
     )
     @PostMapping()
-    public ResponseEntity<String> createTask(
+    public ResponseEntity<TaskResponse> createTask(
             @Valid
             @RequestBody
             @Schema(description = "Название задачи") TaskNameDto taskNameDto) {
-
-        taskService.createNewTask(taskNameDto);
-        return new ResponseEntity<>("Task create successfully", ExceptionCode.SUCCESS.getStatus());
+        return ResponseEntity.status(ExceptionCode.SUCCESS.getStatus())
+                .body(taskService.createNewTask(taskNameDto));
     }
 
     @Operation(
@@ -43,10 +43,10 @@ public class ToDoListController {
             description = "Позволяет получить задачу по id"
     )
     @GetMapping("/getTaskById")
-    public ResponseEntity<Task> getTaskById(@NotNull
-                                            @Valid
-                                            @RequestParam
-                                            @Parameter(description = "Идентификатор задачи") Integer id) {
+    public ResponseEntity<TaskResponse> getTaskById(@NotNull
+                                                    @Valid
+                                                    @RequestParam
+                                                    @Parameter(description = "Идентификатор задачи") Integer id) {
         return new ResponseEntity<>(taskService.getTaskById(id), ExceptionCode.SUCCESS.getStatus());
     }
 
@@ -65,12 +65,15 @@ public class ToDoListController {
             description = "Позволяет обновлять определенные данные задачи"
     )
     @PatchMapping()
-    public ResponseEntity<String> updateTask(@Valid
-                                             @RequestBody @Schema(example = """
-            {"id" : "id",  "taskName" : "Example Task", "status" : "COMPLETED"}""")
-                                             UpdateTaskInfoDto updateTaskInfoDto) {
-        taskService.updateTaskById(updateTaskInfoDto);
-        return new ResponseEntity<>("Task updated successfully", ExceptionCode.SUCCESS.getStatus());
+    public ResponseEntity<TaskResponse> updateTask(@Valid
+                                                   @RequestBody
+                                                   @Schema(example = """
+                                                           {"id" : "id",
+                                                           "taskName" : "Example Task",
+                                                           "status" : "COMPLETED"}""")
+                                                   UpdateTaskInfoDto updateTaskInfoDto) {
+        return ResponseEntity.status(ExceptionCode.SUCCESS.getStatus())
+                .body(taskService.updateTaskById(updateTaskInfoDto));
     }
 
     @Operation(
@@ -78,9 +81,11 @@ public class ToDoListController {
             description = "Позволяет удалять задачи с бд"
     )
     @DeleteMapping()
-    public ResponseEntity<String> deleteTask(@RequestParam @Schema(example = """
-            {"id" : "id" }""") @Parameter(description = "Идентификатор задачи") Integer id) {
-        taskService.deleteById(id);
-        return new ResponseEntity<>("Task deleted successfully", ExceptionCode.SUCCESS.getStatus());
+    public ResponseEntity<TaskResponse> deleteTask(@RequestParam
+                                                   @Schema(example = """
+                                                           { "id" : "id" }""")
+                                                   @Parameter(description = "Идентификатор задачи") Integer id) {
+        return ResponseEntity.status(ExceptionCode.SUCCESS.getStatus())
+                .body(taskService.deleteById(id));
     }
 }
