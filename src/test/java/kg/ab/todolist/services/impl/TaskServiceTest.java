@@ -88,7 +88,7 @@ class TaskServiceTest {
     void updateTaskById() {
         TaskResponse updatedT = TaskResponse.builder()
                 .id(1)
-                .taskName("New Name")
+                .taskName("New name")
                 .taskStatus(COMPLETED)
                 .build();
 
