@@ -9,7 +9,7 @@ import java.util.function.Function;
 public interface TaskValidator extends Function<Task, Boolean> {
     static TaskValidator catchTaskNameAndStatusNull(UpdateTaskInfoDto updateTaskInfoDto) {
         return task -> {
-            if (updateTaskInfoDto.newTaskName() == null && updateTaskInfoDto.status() == null) {
+            if (updateTaskInfoDto.getNewTaskName() == null && updateTaskInfoDto.getStatus() == null) {
                 throw new BaseException(ExceptionCode.NOT_FOUND);
             }
             return true;

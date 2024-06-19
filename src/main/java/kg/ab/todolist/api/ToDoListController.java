@@ -6,64 +6,56 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import kg.ab.todolist.commons.enums.ExceptionCode;
 import kg.ab.todolist.dto.request.TaskNameDto;
-import kg.ab.todolist.dto.TaskResponse;
+import kg.ab.todolist.dto.response.TaskResponse;
 import kg.ab.todolist.dto.request.UpdateTaskInfoDto;
 import kg.ab.todolist.services.TaskService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "To-Do-List Контроллер ", description = "Взаимодействие с сервисом")
+import static kg.ab.todolist.commons.statics.EndPoints.*;
+
+@Validated
 @RestController
-@RequestMapping("/api/v1")
-@AllArgsConstructor
+@RequiredArgsConstructor
+@RequestMapping(TASK_API)
+@Tag(name = "To-Do-List Контроллер ", description = "Взаимодействие с сервисом")
 public class ToDoListController {
     private final TaskService taskService;
 
-    @Operation(
-            summary = "Создание новой задачи",
-            description = "Позволяет создавать новые задачи"
-    )
-    @PostMapping("/tasks")
-    public ResponseEntity<TaskResponse> createTask(
-            @Valid
-            @RequestBody
-            @Schema(description = "Название задачи") TaskNameDto taskNameDto) {
+    @PostMapping()
+    @Operation(summary = "Создание новой задачи", description = "Позволяет создавать новые задачи")
+    public ResponseEntity<TaskResponse> createTask(@Valid
+                                                   @RequestBody
+                                                   @Schema(description = "Название задачи") TaskNameDto taskNameDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(taskService.createNewTask(taskNameDto));
     }
 
-    @Operation(
-            summary = "Получение новой задачи по id",
-            description = "Позволяет получить задачу по id"
-    )
-    @GetMapping("/tasks/{id}")
-    public ResponseEntity<TaskResponse> getTaskById(@NotNull
-                                                    @Valid
-                                                    @PathVariable
-                                                    @Parameter(description = "Идентификатор задачи") Integer id) {
-        return new ResponseEntity<>(taskService.getTaskById(id), ExceptionCode.SUCCESS.getStatus());
+    @GetMapping(value = "/taskId")
+    @Operation(summary = "Получение новой задачи по id", description = "Позволяет получить задачу по id")
+    public ResponseEntity<TaskResponse> getTaskById(@RequestParam
+                                                    @NotNull(message = "Id not null")
+                                                    @Parameter(description = "Идентификатор задачи")
+                                                    Integer id) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(taskService.getTaskById(id));
     }
 
-    @Operation(
-            summary = "Получение всех задач",
-            description = "Позволяет получить все задачи с бд"
-    )
-    @GetMapping("/tasks")
+    @GetMapping()
+    @Operation(summary = "Получение всех задач", description = "Позволяет получить все задачи с бд")
     public ResponseEntity<List<TaskResponse>> getAllTasks() {
-        return new ResponseEntity<>(taskService.getAllTasks(), ExceptionCode.SUCCESS.getStatus());
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(taskService.getAllTasks());
     }
 
-    @Operation(
-            summary = "Обновление данных задачи",
-            description = "Позволяет обновлять определенные данные задачи"
-    )
-    @PatchMapping("/tasks")
+    @PatchMapping()
+    @Operation(summary = "Обновление данных задачи", description = "Позволяет обновлять определенные данные задачи")
     public ResponseEntity<TaskResponse> updateTask(@Valid
                                                    @RequestBody
                                                    @Schema(example = """
@@ -73,23 +65,21 @@ public class ToDoListController {
                                                            "status" : "COMPLETED"
                                                            }
                                                            """) UpdateTaskInfoDto updateTaskInfoDto) {
-        return ResponseEntity.status(ExceptionCode.SUCCESS.getStatus())
+        return ResponseEntity.status(HttpStatus.OK)
                 .body(taskService.updateTaskById(updateTaskInfoDto));
     }
 
-    @Operation(
-            summary = "Удаление задачи",
-            description = "Позволяет удалять задачи с бд"
-    )
-    @DeleteMapping("/tasks/{id}")
-    public ResponseEntity<TaskResponse> deleteTask(@PathVariable
+    @DeleteMapping()
+    @Operation(summary = "Удаление задачи", description = "Позволяет удалять задачи с бд")
+    public ResponseEntity<TaskResponse> deleteTask(@RequestParam
+                                                   @NotNull(message = "Id not null")
                                                    @Schema(example = """
                                                            {
                                                            "id" : "id"
                                                            }
                                                            """)
                                                    @Parameter(description = "Идентификатор задачи") Integer id) {
-        return ResponseEntity.status(ExceptionCode.SUCCESS.getStatus())
+        return ResponseEntity.status(HttpStatus.OK)
                 .body(taskService.deleteById(id));
     }
 }
