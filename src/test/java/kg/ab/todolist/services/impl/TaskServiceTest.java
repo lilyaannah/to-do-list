@@ -1,9 +1,8 @@
 package kg.ab.todolist.services.impl;
 
-import kg.ab.todolist.commons.enums.Status;
 import kg.ab.todolist.commons.enums.StatusOfTask;
 import kg.ab.todolist.commons.exceptions.BaseException;
-import kg.ab.todolist.dto.TaskResponse;
+import kg.ab.todolist.dto.response.TaskResponse;
 import kg.ab.todolist.dto.request.TaskNameDto;
 import kg.ab.todolist.dto.request.UpdateTaskInfoDto;
 import kg.ab.todolist.models.Task;
@@ -20,6 +19,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static kg.ab.todolist.commons.enums.ExceptionCode.*;
+import static kg.ab.todolist.commons.enums.Status.CREATED;
+import static kg.ab.todolist.commons.enums.Status.UPDATED;
 import static kg.ab.todolist.commons.enums.StatusOfTask.COMPLETED;
 import static kg.ab.todolist.commons.enums.StatusOfTask.NOT_COMPLETED;
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,16 +39,16 @@ class TaskServiceTest {
         when(taskRepository.save(any(Task.class))).thenReturn(Task.builder()
                 .id(1)
                 .taskName("Test task")
-                .taskStatus(StatusOfTask.NOT_COMPLETED)
+                .taskStatus(NOT_COMPLETED)
                 .build());
 
         TaskResponse expectedTaskResponse = TaskResponse.builder()
                 .id(1)
                 .taskName("Test task")
-                .taskStatus(StatusOfTask.NOT_COMPLETED)
+                .taskStatus(NOT_COMPLETED)
                 .build();
 
-        TaskResponse actualTaskResponse = sut.createNewTask(new TaskNameDto("Test task"));
+        TaskResponse actualTaskResponse = sut.createNewTask(TaskNameDto.builder().taskName("New name").build());
 
         assertEquals(expectedTaskResponse, actualTaskResponse);
     }
@@ -57,7 +58,7 @@ class TaskServiceTest {
         Task task = Task.builder()
                 .id(1)
                 .taskName("name")
-                .taskStatus(StatusOfTask.COMPLETED)
+                .taskStatus(COMPLETED)
                 .build();
 
         when(taskRepository.findTaskById(1)).thenReturn(Optional.of(task));
@@ -67,7 +68,7 @@ class TaskServiceTest {
         TaskResponse expectedTask = TaskResponse.builder()
                 .id(1)
                 .taskName("name")
-                .taskStatus(StatusOfTask.COMPLETED)
+                .taskStatus(COMPLETED)
                 .build();
 
         assertEquals(expectedTask, foundTask);
@@ -76,13 +77,13 @@ class TaskServiceTest {
     @Test
     void getAllTasks() {
         List<Task> taskList = new ArrayList<>();
-        taskList.add(new Task(1, "Test Name 1", COMPLETED, Status.CREATED));
-        taskList.add(new Task(2, "Test Name 2", NOT_COMPLETED, Status.UPDATED));
+        taskList.add(new Task(1, "Test Name 1", COMPLETED, CREATED));
+        taskList.add(new Task(2, "Test Name 2", NOT_COMPLETED, UPDATED));
         when(taskRepository.findAll()).thenReturn(taskList);
 
         List<TaskResponse> responseTaskList = new ArrayList<>();
-        responseTaskList.add(new TaskResponse(1, "Test Name 1", COMPLETED));
-        responseTaskList.add(new TaskResponse(2, "Test Name 2", NOT_COMPLETED));
+        responseTaskList.add(TaskResponse.builder().id(1).taskName("Test Name 1").taskStatus(COMPLETED).build());
+        responseTaskList.add(TaskResponse.builder().id(2).taskName("Test Name 2").taskStatus(NOT_COMPLETED).build());
 
         List<TaskResponse> actual = sut.getAllTasks();
         assertNotNull(actual);

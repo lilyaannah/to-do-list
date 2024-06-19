@@ -1,11 +1,8 @@
 package kg.ab.todolist.services;
 
-import kg.ab.todolist.commons.enums.ExceptionCode;
-import kg.ab.todolist.commons.enums.Status;
-import kg.ab.todolist.commons.enums.StatusOfTask;
 import kg.ab.todolist.commons.exceptions.BaseException;
 import kg.ab.todolist.dto.request.TaskNameDto;
-import kg.ab.todolist.dto.TaskResponse;
+import kg.ab.todolist.dto.response.TaskResponse;
 import kg.ab.todolist.models.Task;
 import kg.ab.todolist.models.repositories.TaskRepository;
 import kg.ab.todolist.services.validation.TaskValidator;
@@ -14,6 +11,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static kg.ab.todolist.commons.enums.ExceptionCode.LIST_IS_NULL;
+import static kg.ab.todolist.commons.enums.ExceptionCode.NOT_FOUND;
+import static kg.ab.todolist.commons.enums.Status.*;
+import static kg.ab.todolist.commons.enums.StatusOfTask.NOT_COMPLETED;
 
 @Service
 @AllArgsConstructor
@@ -30,15 +32,15 @@ public class TaskService {
      */
     public TaskResponse createNewTask(TaskNameDto taskNameDto) {
         Task task = taskRepository.save(Task.builder()
-                .taskName(taskNameDto.taskName())
-                .taskStatus(StatusOfTask.NOT_COMPLETED)
-                .status(Status.CREATED)
+                .taskName(taskNameDto.getTaskName())
+                .taskStatus(NOT_COMPLETED)
+                .status(CREATED)
                 .build());
 
         return TaskResponse.builder()
                 .id(task.getId())
                 .taskName(task.getTaskName())
-                .taskStatus(StatusOfTask.NOT_COMPLETED)
+                .taskStatus(NOT_COMPLETED)
                 .build();
     }
 
@@ -51,8 +53,8 @@ public class TaskService {
      */
     public TaskResponse getTaskById(Integer id) {
         Task task = taskRepository.findTaskById(id)
-                .filter(sm -> sm.getStatus() != Status.DELETED)
-                .orElseThrow(() -> new BaseException(ExceptionCode.NOT_FOUND));
+                .filter(sm -> sm.getStatus() != DELETED)
+                .orElseThrow(() -> new BaseException(NOT_FOUND));
         return TaskResponse.builder()
                 .id(task.getId())
                 .taskName(task.getTaskName())
@@ -68,11 +70,14 @@ public class TaskService {
     public List<TaskResponse> getAllTasks() {
         List<Task> taskList = taskRepository.findAll();
         if (taskList.isEmpty()) {
-            throw new BaseException(ExceptionCode.LIST_IS_NULL);
+            throw new BaseException(LIST_IS_NULL);
         }
         return taskList.stream()
-                .filter(task -> task.getStatus() != Status.DELETED)
-                .map(task -> new TaskResponse(task.getId(), task.getTaskName(), task.getTaskStatus())).toList();
+                .filter(task -> task.getStatus() != DELETED)
+                .map(task -> TaskResponse.builder()
+                        .id(task.getId())
+                        .taskName(task.getTaskName())
+                        .taskStatus(task.getTaskStatus()).build()).toList();
     }
 
     /**
@@ -82,17 +87,17 @@ public class TaskService {
      * return TaskResponse
      */
     public TaskResponse updateTaskById(UpdateTaskInfoDto updateTaskInfoDto) {
-        Task task = taskRepository.findTaskById(updateTaskInfoDto.id())
-                .orElseThrow(() -> new BaseException(ExceptionCode.NOT_FOUND));
+        Task task = taskRepository.findTaskById(updateTaskInfoDto.getId())
+                .orElseThrow(() -> new BaseException(NOT_FOUND));
 
         TaskValidator.catchTaskNameAndStatusNull(updateTaskInfoDto).apply(task);
 
-        task.setTaskName(updateTaskInfoDto.newTaskName() != null ?
-                updateTaskInfoDto.newTaskName() : task.getTaskName());
+        task.setTaskName(updateTaskInfoDto.getNewTaskName() != null ?
+                updateTaskInfoDto.getNewTaskName() : task.getTaskName());
 
-        task.setTaskStatus(updateTaskInfoDto.status() != null ?
-                updateTaskInfoDto.status() : task.getTaskStatus());
-        task.setStatus(Status.UPDATED);
+        task.setTaskStatus(updateTaskInfoDto.getStatus() != null ?
+                updateTaskInfoDto.getStatus() : task.getTaskStatus());
+        task.setStatus(UPDATED);
 
         return TaskResponse.builder()
                 .id(taskRepository.save(task).getId())
@@ -111,8 +116,9 @@ public class TaskService {
      */
     public TaskResponse deleteById(Integer id) {
         Task task = taskRepository.findTaskById(id)
-                .orElseThrow(() -> new BaseException(ExceptionCode.NOT_FOUND));
-        task.setStatus(Status.DELETED);
+                .filter(t -> t.getStatus() != DELETED)
+                .orElseThrow(() -> new BaseException(NOT_FOUND));
+        task.setStatus(DELETED);
         return TaskResponse.builder()
                 .id(taskRepository.save(task).getId())
                 .taskName(taskRepository.save(task).getTaskName())
