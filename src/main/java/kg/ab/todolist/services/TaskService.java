@@ -8,6 +8,7 @@ import kg.ab.todolist.models.repositories.TaskRepository;
 import kg.ab.todolist.services.validation.TaskValidator;
 import kg.ab.todolist.dto.request.UpdateTaskInfoDto;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,7 +19,7 @@ import static kg.ab.todolist.commons.enums.Status.*;
 import static kg.ab.todolist.commons.enums.StatusOfTask.NOT_COMPLETED;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TaskService {
     private final TaskRepository taskRepository;
 
