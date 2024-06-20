@@ -28,7 +28,7 @@ import static kg.ab.todolist.commons.statics.EndPoints.*;
 public class ToDoListController {
     private final TaskService taskService;
 
-    @PostMapping()
+    @PostMapping
     @Operation(summary = "Создание новой задачи", description = "Позволяет создавать новые задачи")
     public ResponseEntity<TaskResponse> createTask(@Valid
                                                    @RequestBody
@@ -47,14 +47,14 @@ public class ToDoListController {
                 .body(taskService.getTaskById(id));
     }
 
-    @GetMapping()
+    @GetMapping
     @Operation(summary = "Получение всех задач", description = "Позволяет получить все задачи с бд")
     public ResponseEntity<List<TaskResponse>> getAllTasks() {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(taskService.getAllTasks());
     }
 
-    @PatchMapping()
+    @PatchMapping
     @Operation(summary = "Обновление данных задачи", description = "Позволяет обновлять определенные данные задачи")
     public ResponseEntity<TaskResponse> updateTask(@Valid
                                                    @RequestBody
@@ -69,7 +69,7 @@ public class ToDoListController {
                 .body(taskService.updateTaskById(updateTaskInfoDto));
     }
 
-    @DeleteMapping()
+    @DeleteMapping
     @Operation(summary = "Удаление задачи", description = "Позволяет удалять задачи с бд")
     public ResponseEntity<TaskResponse> deleteTask(@RequestParam
                                                    @NotNull(message = "Id not null")
