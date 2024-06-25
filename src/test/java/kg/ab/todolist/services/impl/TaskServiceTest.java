@@ -5,7 +5,7 @@ import kg.ab.todolist.commons.exceptions.BaseException;
 import kg.ab.todolist.dto.response.TaskResponse;
 import kg.ab.todolist.dto.request.TaskNameDto;
 import kg.ab.todolist.dto.request.UpdateTaskInfoDto;
-import kg.ab.todolist.models.Task;
+import kg.ab.todolist.models.TaskEntity;
 import kg.ab.todolist.models.repositories.TaskRepository;
 import kg.ab.todolist.services.TaskService;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ class TaskServiceTest {
 
     @Test
     void createTask() {
-        when(taskRepository.save(any(Task.class))).thenReturn(Task.builder()
+        when(taskRepository.save(any(TaskEntity.class))).thenReturn(TaskEntity.builder()
                 .id(1)
                 .taskName("Test task")
                 .taskStatus(NOT_COMPLETED)
@@ -55,13 +55,13 @@ class TaskServiceTest {
 
     @Test
     void getTaskById() {
-        Task task = Task.builder()
+        TaskEntity task = TaskEntity.builder()
                 .id(1)
                 .taskName("name")
                 .taskStatus(COMPLETED)
                 .build();
 
-        when(taskRepository.findTaskById(1)).thenReturn(Optional.of(task));
+        when(taskRepository.findByIdAndStatusNotDeleted(1)).thenReturn(Optional.of(task));
 
         TaskResponse foundTask = sut.getTaskById(1);
 
@@ -76,10 +76,10 @@ class TaskServiceTest {
 
     @Test
     void getAllTasks() {
-        List<Task> taskList = new ArrayList<>();
-        taskList.add(new Task(1, "Test Name 1", COMPLETED, CREATED));
-        taskList.add(new Task(2, "Test Name 2", NOT_COMPLETED, UPDATED));
-        when(taskRepository.findAll()).thenReturn(taskList);
+        List<TaskEntity> taskList = new ArrayList<>();
+        taskList.add(new TaskEntity(1, "Test Name 1", COMPLETED, CREATED));
+        taskList.add(new TaskEntity(2, "Test Name 2", NOT_COMPLETED, UPDATED));
+        when(taskRepository.findAllStatusNotDeleted()).thenReturn(taskList);
 
         List<TaskResponse> responseTaskList = new ArrayList<>();
         responseTaskList.add(TaskResponse.builder().id(1).taskName("Test Name 1").taskStatus(COMPLETED).build());
@@ -98,13 +98,13 @@ class TaskServiceTest {
                 .taskStatus(COMPLETED)
                 .build();
 
-        Task task = Task.builder()
+        TaskEntity task = TaskEntity.builder()
                 .id(1)
                 .taskName("New name")
                 .taskStatus(COMPLETED)
                 .build();
 
-        when(taskRepository.findTaskById(1)).thenReturn(Optional.of(new Task()));
+        when(taskRepository.findByIdAndStatusNotDeleted(1)).thenReturn(Optional.of(new TaskEntity()));
         when(taskRepository.save(any())).thenReturn(task);
 
         TaskResponse testSut = sut.updateTaskById(

@@ -13,11 +13,13 @@ import lombok.*;
 public class UpdateTaskInfoDto {
     @NotNull(message = "Идентификатор задачи не найден")
     @JsonProperty("id")
-    @Schema(description = "Идентификатор")
+    @Schema(description = "Идентификатор задачи")
     private Integer id;
+
     @JsonProperty("task_name")
     @Schema(description = "Новая задача")
     private String newTaskName;
+
     @Schema(description = "Статус задачи", example = "COMPLETED")
     private StatusOfTask status;
 }

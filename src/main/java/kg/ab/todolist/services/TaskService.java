@@ -3,11 +3,10 @@ package kg.ab.todolist.services;
 import kg.ab.todolist.commons.exceptions.BaseException;
 import kg.ab.todolist.dto.request.TaskNameDto;
 import kg.ab.todolist.dto.response.TaskResponse;
-import kg.ab.todolist.models.Task;
+import kg.ab.todolist.models.TaskEntity;
 import kg.ab.todolist.models.repositories.TaskRepository;
 import kg.ab.todolist.services.validation.TaskValidator;
 import kg.ab.todolist.dto.request.UpdateTaskInfoDto;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +31,7 @@ public class TaskService {
      * return TaskResponse
      */
     public TaskResponse createNewTask(TaskNameDto taskNameDto) {
-        Task task = taskRepository.save(Task.builder()
+        TaskEntity task = taskRepository.save(TaskEntity.builder()
                 .taskName(taskNameDto.getTaskName())
                 .taskStatus(NOT_COMPLETED)
                 .status(CREATED)
@@ -53,13 +52,12 @@ public class TaskService {
      * return TaskResponse
      */
     public TaskResponse getTaskById(Integer id) {
-        Task task = taskRepository.findTaskById(id)
-                .filter(sm -> sm.getStatus() != DELETED)
+        TaskEntity taskEntity = taskRepository.findByIdAndStatusNotDeleted(id)
                 .orElseThrow(() -> new BaseException(NOT_FOUND));
         return TaskResponse.builder()
-                .id(task.getId())
-                .taskName(task.getTaskName())
-                .taskStatus(task.getTaskStatus())
+                .id(taskEntity.getId())
+                .taskName(taskEntity.getTaskName())
+                .taskStatus(taskEntity.getTaskStatus())
                 .build();
     }
 
@@ -69,12 +67,11 @@ public class TaskService {
      * return TaskResponse
      */
     public List<TaskResponse> getAllTasks() {
-        List<Task> taskList = taskRepository.findAll();
+        List<TaskEntity> taskList = taskRepository.findAllStatusNotDeleted();
         if (taskList.isEmpty()) {
             throw new BaseException(LIST_IS_NULL);
         }
         return taskList.stream()
-                .filter(task -> task.getStatus() != DELETED)
                 .map(task -> TaskResponse.builder()
                         .id(task.getId())
                         .taskName(task.getTaskName())
@@ -88,22 +85,20 @@ public class TaskService {
      * return TaskResponse
      */
     public TaskResponse updateTaskById(UpdateTaskInfoDto updateTaskInfoDto) {
-        Task task = taskRepository.findTaskById(updateTaskInfoDto.getId())
+        TaskEntity task = taskRepository.findByIdAndStatusNotDeleted(updateTaskInfoDto.getId())
                 .orElseThrow(() -> new BaseException(NOT_FOUND));
-
         TaskValidator.catchTaskNameAndStatusNull(updateTaskInfoDto).apply(task);
 
         task.setTaskName(updateTaskInfoDto.getNewTaskName() != null ?
                 updateTaskInfoDto.getNewTaskName() : task.getTaskName());
-
         task.setTaskStatus(updateTaskInfoDto.getStatus() != null ?
                 updateTaskInfoDto.getStatus() : task.getTaskStatus());
         task.setStatus(UPDATED);
-
+        TaskEntity savedTask = taskRepository.save(task);
         return TaskResponse.builder()
-                .id(taskRepository.save(task).getId())
-                .taskName(taskRepository.save(task).getTaskName())
-                .taskStatus(taskRepository.save(task).getTaskStatus())
+                .id(savedTask.getId())
+                .taskName(savedTask.getTaskName())
+                .taskStatus(savedTask.getTaskStatus())
                 .build();
     }
 
@@ -116,14 +111,14 @@ public class TaskService {
      * return TaskResponse
      */
     public TaskResponse deleteById(Integer id) {
-        Task task = taskRepository.findTaskById(id)
-                .filter(t -> t.getStatus() != DELETED)
+        TaskEntity task = taskRepository.findByIdAndStatusNotDeleted(id)
                 .orElseThrow(() -> new BaseException(NOT_FOUND));
         task.setStatus(DELETED);
+        TaskEntity deletedTask = taskRepository.save(task);
         return TaskResponse.builder()
-                .id(taskRepository.save(task).getId())
-                .taskName(taskRepository.save(task).getTaskName())
-                .taskStatus(taskRepository.save(task).getTaskStatus())
+                .id(deletedTask.getId())
+                .taskName(deletedTask.getTaskName())
+                .taskStatus(deletedTask.getTaskStatus())
                 .build();
     }
 }

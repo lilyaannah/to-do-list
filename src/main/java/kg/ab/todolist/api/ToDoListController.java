@@ -30,55 +30,54 @@ public class ToDoListController {
 
     @PostMapping
     @Operation(summary = "Создание новой задачи", description = "Позволяет создавать новые задачи")
-    public ResponseEntity<TaskResponse> createTask(@Valid
-                                                   @RequestBody
-                                                   @Schema(description = "Название задачи") TaskNameDto taskNameDto) {
+    public ResponseEntity<TaskResponse> add(@Valid
+                                            @RequestBody
+                                            @Schema(description = "Название задачи") TaskNameDto taskNameDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(taskService.createNewTask(taskNameDto));
     }
 
     @GetMapping(value = "/taskId")
     @Operation(summary = "Получение новой задачи по id", description = "Позволяет получить задачу по id")
-    public ResponseEntity<TaskResponse> getTaskById(@RequestParam
-                                                    @NotNull(message = "Id not null")
-                                                    @Parameter(description = "Идентификатор задачи")
-                                                    Integer id) {
+    public ResponseEntity<TaskResponse> getById(@RequestParam(name = "id")
+                                                @Parameter(description = "Идентификатор задачи")
+                                                Integer id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(taskService.getTaskById(id));
     }
 
     @GetMapping
     @Operation(summary = "Получение всех задач", description = "Позволяет получить все задачи с бд")
-    public ResponseEntity<List<TaskResponse>> getAllTasks() {
+    public ResponseEntity<List<TaskResponse>> getAll() {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(taskService.getAllTasks());
     }
 
     @PatchMapping
     @Operation(summary = "Обновление данных задачи", description = "Позволяет обновлять определенные данные задачи")
-    public ResponseEntity<TaskResponse> updateTask(@Valid
-                                                   @RequestBody
-                                                   @Schema(example = """
-                                                           {
-                                                           "id" : "id",
-                                                           "taskName" : "Example Task",
-                                                           "status" : "COMPLETED"
-                                                           }
-                                                           """) UpdateTaskInfoDto updateTaskInfoDto) {
+    public ResponseEntity<TaskResponse> update(@Valid
+                                               @RequestBody
+                                               @Schema(example = """
+                                                       {
+                                                       "id" : "id",
+                                                       "taskName" : "Example Task",
+                                                       "status" : "COMPLETED"
+                                                       }
+                                                       """) UpdateTaskInfoDto updateTaskInfoDto) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(taskService.updateTaskById(updateTaskInfoDto));
     }
 
     @DeleteMapping
     @Operation(summary = "Удаление задачи", description = "Позволяет удалять задачи с бд")
-    public ResponseEntity<TaskResponse> deleteTask(@RequestParam
-                                                   @NotNull(message = "Id not null")
-                                                   @Schema(example = """
-                                                           {
-                                                           "id" : "id"
-                                                           }
-                                                           """)
-                                                   @Parameter(description = "Идентификатор задачи") Integer id) {
+    public ResponseEntity<TaskResponse> delete(@RequestParam(name = "id")
+                                               @NotNull(message = "Id not null")
+                                               @Schema(example = """
+                                                       {
+                                                       "id" : "id"
+                                                       }
+                                                       """)
+                                               @Parameter(description = "Идентификатор задачи") Integer id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(taskService.deleteById(id));
     }

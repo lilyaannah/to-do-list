@@ -1,8 +1,8 @@
 package kg.ab.todolist.api.advice;
 
 import kg.ab.todolist.commons.exceptions.BaseException;
+import kg.ab.todolist.commons.exceptions.ListNullException;
 import kg.ab.todolist.dto.response.ErrorResponse;
-import kg.ab.todolist.commons.exceptions.ListNullExp;
 import kg.ab.todolist.commons.exceptions.WrongRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -34,7 +34,7 @@ public class ControllerAdvice {
                 .body(new ErrorResponse(exception.getExceptionCode(), exception.getMessage()));
     }
 
-    @ExceptionHandler(ListNullExp.class)
+    @ExceptionHandler(ListNullException.class)
     public ResponseEntity<ErrorResponse> handleTaskNameAndStatusNullException(BaseException exception) {
         return ResponseEntity
                 .status(LIST_IS_NULL.getStatus())
