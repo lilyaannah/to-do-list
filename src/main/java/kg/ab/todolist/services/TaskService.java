@@ -51,7 +51,7 @@ public class TaskService {
      * если статус состояния задачи DELETED выводится не найдено
      * return TaskResponse
      */
-    public TaskResponse getTaskById(Integer id) {
+    public TaskResponse getTaskById(Long id) {
         TaskEntity taskEntity = taskRepository.findByIdAndStatusNotDeleted(id)
                 .orElseThrow(() -> new BaseException(NOT_FOUND));
         return TaskResponse.builder()
@@ -89,10 +89,14 @@ public class TaskService {
                 .orElseThrow(() -> new BaseException(NOT_FOUND));
         TaskValidator.catchTaskNameAndStatusNull(updateTaskInfoDto).apply(task);
 
-        task.setTaskName(updateTaskInfoDto.getNewTaskName() != null ?
-                updateTaskInfoDto.getNewTaskName() : task.getTaskName());
-        task.setTaskStatus(updateTaskInfoDto.getStatus() != null ?
-                updateTaskInfoDto.getStatus() : task.getTaskStatus());
+        if (updateTaskInfoDto.getNewTaskName() != null) {
+            task.setTaskName(updateTaskInfoDto.getNewTaskName());
+        }
+
+        if (updateTaskInfoDto.getStatus() != null) {
+            task.setTaskStatus(updateTaskInfoDto.getStatus());
+        }
+
         task.setStatus(UPDATED);
         TaskEntity savedTask = taskRepository.save(task);
         return TaskResponse.builder()
@@ -110,7 +114,7 @@ public class TaskService {
      * статус задачи меняется на DELETED
      * return TaskResponse
      */
-    public TaskResponse deleteById(Integer id) {
+    public TaskResponse deleteById(Long id) {
         TaskEntity task = taskRepository.findByIdAndStatusNotDeleted(id)
                 .orElseThrow(() -> new BaseException(NOT_FOUND));
         task.setStatus(DELETED);

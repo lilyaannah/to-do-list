@@ -14,7 +14,7 @@ public class UpdateTaskInfoDto {
     @NotNull(message = "Идентификатор задачи не найден")
     @JsonProperty("id")
     @Schema(description = "Идентификатор задачи")
-    private Integer id;
+    private Long id;
 
     @JsonProperty("task_name")
     @Schema(description = "Новая задача")

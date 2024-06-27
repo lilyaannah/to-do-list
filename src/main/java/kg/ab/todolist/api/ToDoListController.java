@@ -41,7 +41,7 @@ public class ToDoListController {
     @Operation(summary = "Получение новой задачи по id", description = "Позволяет получить задачу по id")
     public ResponseEntity<TaskResponse> getById(@RequestParam(name = "id")
                                                 @Parameter(description = "Идентификатор задачи")
-                                                Integer id) {
+                                                    Long id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(taskService.getTaskById(id));
     }
@@ -77,7 +77,7 @@ public class ToDoListController {
                                                        "id" : "id"
                                                        }
                                                        """)
-                                               @Parameter(description = "Идентификатор задачи") Integer id) {
+                                               @Parameter(description = "Идентификатор задачи") Long id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(taskService.deleteById(id));
     }
