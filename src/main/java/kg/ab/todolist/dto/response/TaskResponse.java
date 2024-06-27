@@ -8,7 +8,7 @@ import lombok.*;
 @Builder
 public class TaskResponse {
     @Schema(description = "Идентификтор задачи")
-    private Integer id;
+    private Long id;
 
     @Schema(description = "Описание задачи")
     private String taskName;

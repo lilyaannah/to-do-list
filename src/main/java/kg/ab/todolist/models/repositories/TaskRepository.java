@@ -8,9 +8,9 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
+public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
     @Query("SELECT t FROM TaskEntity t WHERE t.id = :id AND t.status != 'DELETED'")
-    Optional<TaskEntity> findByIdAndStatusNotDeleted(@Param("id") Integer id);
+    Optional<TaskEntity> findByIdAndStatusNotDeleted(@Param("id") Long id);
 
     @Query("SELECT t FROM TaskEntity t WHERE t.status != 'DELETED'")
     List<TaskEntity> findAllStatusNotDeleted();

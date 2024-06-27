@@ -37,13 +37,13 @@ class TaskServiceTest {
     @Test
     void createTask() {
         when(taskRepository.save(any(TaskEntity.class))).thenReturn(TaskEntity.builder()
-                .id(1)
+                .id(1L)
                 .taskName("Test task")
                 .taskStatus(NOT_COMPLETED)
                 .build());
 
         TaskResponse expectedTaskResponse = TaskResponse.builder()
-                .id(1)
+                .id(1L)
                 .taskName("Test task")
                 .taskStatus(NOT_COMPLETED)
                 .build();
@@ -56,17 +56,17 @@ class TaskServiceTest {
     @Test
     void getTaskById() {
         TaskEntity task = TaskEntity.builder()
-                .id(1)
+                .id(1L)
                 .taskName("name")
                 .taskStatus(COMPLETED)
                 .build();
 
-        when(taskRepository.findByIdAndStatusNotDeleted(1)).thenReturn(Optional.of(task));
+        when(taskRepository.findByIdAndStatusNotDeleted(1L)).thenReturn(Optional.of(task));
 
-        TaskResponse foundTask = sut.getTaskById(1);
+        TaskResponse foundTask = sut.getTaskById(1L);
 
         TaskResponse expectedTask = TaskResponse.builder()
-                .id(1)
+                .id(1L)
                 .taskName("name")
                 .taskStatus(COMPLETED)
                 .build();
@@ -77,13 +77,13 @@ class TaskServiceTest {
     @Test
     void getAllTasks() {
         List<TaskEntity> taskList = new ArrayList<>();
-        taskList.add(new TaskEntity(1, "Test Name 1", COMPLETED, CREATED));
-        taskList.add(new TaskEntity(2, "Test Name 2", NOT_COMPLETED, UPDATED));
+        taskList.add(new TaskEntity(1L, "Test Name 1", COMPLETED, CREATED));
+        taskList.add(new TaskEntity(2L, "Test Name 2", NOT_COMPLETED, UPDATED));
         when(taskRepository.findAllStatusNotDeleted()).thenReturn(taskList);
 
         List<TaskResponse> responseTaskList = new ArrayList<>();
-        responseTaskList.add(TaskResponse.builder().id(1).taskName("Test Name 1").taskStatus(COMPLETED).build());
-        responseTaskList.add(TaskResponse.builder().id(2).taskName("Test Name 2").taskStatus(NOT_COMPLETED).build());
+        responseTaskList.add(TaskResponse.builder().id(1L).taskName("Test Name 1").taskStatus(COMPLETED).build());
+        responseTaskList.add(TaskResponse.builder().id(2L).taskName("Test Name 2").taskStatus(NOT_COMPLETED).build());
 
         List<TaskResponse> actual = sut.getAllTasks();
         assertNotNull(actual);
@@ -93,22 +93,22 @@ class TaskServiceTest {
     @Test
     void updateTaskById() {
         TaskResponse updatedT = TaskResponse.builder()
-                .id(1)
+                .id(1L)
                 .taskName("New name")
                 .taskStatus(COMPLETED)
                 .build();
 
         TaskEntity task = TaskEntity.builder()
-                .id(1)
+                .id(1L)
                 .taskName("New name")
                 .taskStatus(COMPLETED)
                 .build();
 
-        when(taskRepository.findByIdAndStatusNotDeleted(1)).thenReturn(Optional.of(new TaskEntity()));
+        when(taskRepository.findByIdAndStatusNotDeleted(1L)).thenReturn(Optional.of(new TaskEntity()));
         when(taskRepository.save(any())).thenReturn(task);
 
         TaskResponse testSut = sut.updateTaskById(
-                new UpdateTaskInfoDto(1, "New Name", COMPLETED));
+                new UpdateTaskInfoDto(1L, "New Name", COMPLETED));
 
         assertEquals(updatedT, testSut);
     }
@@ -134,7 +134,7 @@ class TaskServiceTest {
 
     @Test
     void updateTaskIdNotFoundException() {
-        UpdateTaskInfoDto updateTaskInfoDto = new UpdateTaskInfoDto(999, "New Name", StatusOfTask.COMPLETED);
+        UpdateTaskInfoDto updateTaskInfoDto = new UpdateTaskInfoDto(any(), "New Name", StatusOfTask.COMPLETED);
 
         BaseException exception = assertThrows(
                 BaseException.class,
@@ -147,7 +147,7 @@ class TaskServiceTest {
     void deleteTaskNotFoundException() {
         BaseException exception = assertThrows(
                 BaseException.class,
-                () -> sut.deleteById(1)
+                () -> sut.deleteById(1L)
         );
         assertEquals(NOT_FOUND.getMessage(), exception.getMessage());
     }
